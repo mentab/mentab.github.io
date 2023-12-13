@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mentab</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/holiday.css@0.11.2" />
+
+</head>
+<body>
+    <header>
+        <h1>Mentab</h1>
+    </header>
+    <main>
+        <ul id="github-repositories"></ul>
+    </main>
+    <footer>
+        mentab.github.io
+    </footer>
+    <script>
+        function fetchGitHubRepositories(username) {
+            fetch(`https://api.github.com/users/${username}/repos`)
+                .then(response => response.json())
+                .then(repositories => displayGitHubRepositories(repositories))
+                .catch(error => console.error('Erreur lors de la récupération des dépôts GitHub', error));
+        }
+
+        function displayGitHubRepositories(repositories) {
+            const githubRepositoriesList = document.getElementById('github-repositories');
+        
+            const repositoriesWithHomepage = repositories.filter(repo => repo.homepage);
+        
+            repositoriesWithHomepage.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+            repositoriesWithHomepage.forEach(({ name, homepage, created_at }) => {
+                const listItem = document.createElement('li');
+                const homepageLink = `<a href="${homepage}" target="_blank">${name}</a>`;
+                const dateCreated = new Date(created_at).toLocaleDateString();
+        
+                listItem.innerHTML = `<em>${dateCreated}</em> - <strong>${homepageLink}</strong>`;
+        
+                githubRepositoriesList.appendChild(listItem);
+            });
+        }
+
+
+        const githubUsername = 'mentab';
+        fetchGitHubRepositories(githubUsername);
+    </script>
+</body>
+</html>
